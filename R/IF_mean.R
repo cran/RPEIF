@@ -5,11 +5,10 @@
 #' @param returns Vector of the returns of the asset or portfolio.
 #' @param evalShape Evaluation of the shape of the IF risk measure if TRUE. Otherwise, a TS of the IF of the provided returns is computed.
 #' @param retVals Values used to evaluate the shape of the IF.
-#' @param nuisPars  Nuisance parameters used for the evaluation of the shape of the IF (if no returns are provided).
+#' @param nuisPars Nuisance parameters used for the evaluation of the shape of the IF (if no returns are provided).
 #' @param k Range parameter for the shape of the IF (the SD gets multiplied k times).
 #' @param IFplot If TRUE, the plot of the IF shape or IF TS of the returns is produced.
 #' @param IFprint If TRUE, the data for the IF shape or the IF TS of the returns is returned.
-#' @param compile Boolean variable to indicate if the IF TS should be computed using compiled code (C++) (TRUE) or not (FALSE).
 #' @param prewhiten Boolean variable to indicate if the IF TS is pre-whitened (TRUE) or not (FALSE).
 #' @param ar.prewhiten.order Order of AR parameter for the pre-whitening. Default is AR(1).
 #' @param cleanOutliers Boolean variable to indicate whether the pre-whitenning of the influence functions TS should be done through a robust filter.
@@ -26,7 +25,7 @@
 #' 
 #' @examples
 #' # Plot of IF with nuisance parameter with return value
-#' outIF <- IF.mean(returns=NULL, evalShape=TRUE, retVals=NULL, nuisPars =NULL,
+#' outIF <- IF.mean(returns=NULL, evalShape=TRUE, retVals=NULL, nuisPars=NULL,
 #'                  IFplot=TRUE, IFprint=TRUE)
 #'
 #' data(edhec, package="PerformanceAnalytics")
@@ -36,19 +35,19 @@
 #' # Plot of IF a specified TS 
 #' outIF <- IF.mean(risk="mean",
 #'                  returns=edhec[,"CA"], evalShape=TRUE, 
-#'                  retVals=seq(-0.1, 0.1, by=0.001), nuisPars =NULL,
+#'                  retVals=seq(-0.1, 0.1, by=0.001), nuisPars=NULL,
 #'                  IFplot=TRUE, IFprint=TRUE)
 #' 
 #' # Computing the IF of the returns (with outlier cleaning and prewhitening) with a plot of IF TS
 #' outIF <- IF.mean(returns=edhec[,"CA"], evalShape=FALSE, 
-#'                  retVals=NULL, nuisPars =NULL,
+#'                  retVals=NULL, nuisPars=NULL,
 #'                  IFplot=TRUE, IFprint=TRUE,
-#'                  compile=TRUE, prewhiten=FALSE,
+#'                  prewhiten=FALSE,
 #'                  cleanOutliers=TRUE, cleanMethod=c("locScaleRob", "Boudt")[1], eff=0.99)
 #'
-IF.mean <- function(returns=NULL, evalShape=FALSE, retVals=NULL, nuisPars =NULL, k=4,
+IF.mean <- function(returns=NULL, evalShape=FALSE, retVals=NULL, nuisPars=NULL, k=4,
                     IFplot=FALSE, IFprint=TRUE, 
-                    compile=TRUE, prewhiten=FALSE, ar.prewhiten.order=1,
+                    prewhiten=FALSE, ar.prewhiten.order=1,
                     cleanOutliers=FALSE, cleanMethod=c("locScaleRob", "Boudt")[1], eff=0.99, alpha.robust=0.05,
                     ...){
   
@@ -107,29 +106,29 @@ IF.mean <- function(returns=NULL, evalShape=FALSE, retVals=NULL, nuisPars =NULL,
   }
   
   # Check data for the nuisance parameters
-  if(!is.null(nuisPars ))
-    if(!is.list(nuisPars ))
-      stop("nuisPars  must be a list.")
+  if(!is.null(nuisPars))
+    if(!is.list(nuisPars))
+      stop("nuisPars must be a list.")
   
   # Evaluation of nuisance parameters
-  if(is.null(nuisPars ))
-    nuisPars  <- nuisParsFn() else{
-      if(!is.null(nuisPars $mu)){
-        nuis.mu <- nuisPars $mu} else{
+  if(is.null(nuisPars))
+    nuisPars <- nuisParsFn() else{
+      if(!is.null(nuisPars$mu)){
+        nuis.mu <- nuisPars$mu} else{
           nuis.mu <- 0.01}
-      if(!is.null(nuisPars $sd)){
-        nuis.sd <- nuisPars $sd} else{
+      if(!is.null(nuisPars$sd)){
+        nuis.sd <- nuisPars$sd} else{
           nuis.sd <- 0.05}
-      if(!is.null(nuisPars $c)){
-        nuis.c <- nuisPars $c} else{
+      if(!is.null(nuisPars$c)){
+        nuis.c <- nuisPars$c} else{
           nuis.c <- 0}
-      if(!is.null(nuisPars $alpha)){
-        nuis.alpha <- nuisPars $alpha} else{
+      if(!is.null(nuisPars$alpha)){
+        nuis.alpha <- nuisPars$alpha} else{
           nuis.alpha <- 0.1}
-      if(!is.null(nuisPars $beta)){
-        nuis.beta <- nuisPars $beta} else{
+      if(!is.null(nuisPars$beta)){
+        nuis.beta <- nuisPars$beta} else{
           nuis.beta <- 0.1}
-      nuisPars  <- nuisParsFn(nuis.mu, nuis.sd, nuis.c, nuis.alpha, nuis.beta)
+      nuisPars <- nuisParsFn(nuis.mu, nuis.sd, nuis.c, nuis.alpha, nuis.beta)
     }
   
   # Function evaluation
@@ -137,7 +136,7 @@ IF.mean <- function(returns=NULL, evalShape=FALSE, retVals=NULL, nuisPars =NULL,
     if(is.null(retVals))
       if(!is.null(returns))
         retVals <- seq(mean(returns)-k*sd(returns), mean(returns)+k*sd(returns), by=0.001) else
-          retVals <- seq(nuisPars $mu-k*0.07, nuisPars $mu+k*0.07, by=0.001)
+          retVals <- seq(nuisPars$mu-k*0.07, nuisPars$mu+k*0.07, by=0.001)
         IFvals <- cbind(retVals, IF.fn(retVals, risk="mean", returns, nuisPars ))
         colnames(IFvals) <- c("r", "IFvals")
         if(isTRUE(IFplot)){
@@ -167,15 +166,11 @@ IF.mean <- function(returns=NULL, evalShape=FALSE, retVals=NULL, nuisPars =NULL,
         returns <- temp.returns
   }
   
-  if(compile){
-    IF.mean.vector <- as.vector(IF_mean(returns))
-  } else{   
-    # Computing the mean of the returns
-    mu.hat <- mean(returns)
-    
-    # Computing the IF vector for the mean of the returns
-    IF.mean.vector <- returns - mu.hat
-  }
+  # Computing the mean of the returns
+  mu.hat <- mean(returns)
+  
+  # Computing the IF vector for the mean of the returns
+  IF.mean.vector <- returns - mu.hat
   
   # Adding the pre-whitening functionality  
   if(prewhiten)
