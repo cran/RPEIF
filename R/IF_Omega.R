@@ -1,8 +1,18 @@
+# Function to compute the UPM
+UPM <- function(returns, const = 0, order = 1, ...){
+  
+  # Compute the length of the returns vector
+  N <- length(returns)
+  
+  # Computing the LPM
+  return(1/N*sum((const-returns[returns>=const])^order))
+}
+
 #' @title Influence Function - Omega Ratio
 #' 
 #' @description \code{IF.OmegaRatio} returns the data and plots the shape of either the IF or the IF TS for the Omega Ratio.
 #'
-#' @param returns Vector of the returns of the asset or portfolio.
+#' @param returns Returns data of the asset or portfolio. This can be a numeric or an xts object.
 #' @param evalShape Evaluation of the shape of the IF risk measure if TRUE. Otherwise, a TS of the IF of the provided returns is computed.
 #' @param retVals Values used to evaluate the shape of the IF.
 #' @param nuisPars Nuisance parameters used for the evaluation of the shape of the IF (if no returns are provided).
@@ -12,8 +22,8 @@
 #' @param const Constant threshold.
 #' @param prewhiten Boolean variable to indicate if the IF TS is pre-whitened (TRUE) or not (FALSE).
 #' @param ar.prewhiten.order Order of AR parameter for the pre-whitening. Default is AR(1).
-#' @param cleanOutliers Boolean variable to indicate whether the pre-whitenning of the influence functions TS should be done through a robust filter.
-#' @param cleanMethod Robust method used to clean outliers from the TS. The choices are "Boudt" and "locScaleRob" for the function. 
+#' @param cleanOutliers Boolean variable to indicate whether outliers are cleaned with a robust location and scale estimator.
+#' @param cleanMethod Robust method used to clean outliers from the TS. The choices are "locScaleRob" (default) and "Boudt" for the function. 
 #' @param alpha.robust Tuning parameter for the quantile of the "Boudt" robust data cleaning algorithm, using the minimum covariance determinant estimator (MCD).
 #' @param eff Tuning parameter for the normal distribution efficiency for the "locScaleRob" robust data cleaning.
 #' @param ... Additional parameters.
@@ -175,14 +185,12 @@ IF.Omega <- function(returns=NULL, evalShape=FALSE, retVals=NULL, nuisPars=NULL,
   # Returning length of returns vector
   N <- length(returns)
   
-  # Computing Omega+
-  Omega_p <- sum(returns[returns>=const]-const)/N
-  # Computing Omega-
-  Omega_m <- sum(const-returns[returns<=const])/N
+  # Computing Partial moments 
+  LPM.c <- LPM(returns, const=const, order=1) 
+  UPM.c <- UPM(returns, const=const, order=1)
   # Computing the IF vector for Omega Ratio
-  IF.Omega.vector <- ((returns - const) * (returns >= const) - Omega_p)/ Omega_m
-  IF.Omega.vector <- IF.Omega.vector - Omega_p / Omega_m^2 * ((const - returns) * (returns <= const) - Omega_m) 
-  
+  IF.Omega.vector <- 1/LPM.c*((returns-const)*(returns>=const)-UPM.c) - ((UPM.c/LPM.c)/LPM.c)*((const-returns)*(returns<=const)-LPM.c)
+
   # Adding the pre-whitening functionality  
   if(prewhiten)
     IF.Omega.vector <- as.numeric(arima(x=IF.Omega.vector, order=c(ar.prewhiten.order,0,0), include.mean=TRUE)$residuals)
