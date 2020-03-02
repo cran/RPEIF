@@ -25,13 +25,25 @@ IF.SoR.mean <- function(returns=NULL, evalShape=FALSE, retVals=NULL, nuisPars=NU
       nuisPars <- nuisParsFn(nuis.mu, nuis.sd, nuis.c, nuis.alpha, nuis.beta)
     }
   
+  # Storing the dates
+  if(xts::is.xts(returns))
+    returns.dates <- zoo::index(returns)
+  
+  # Adding the robust filtering functionality
+  if(cleanOutliers){
+    temp.returns <- robust.cleaning(returns, cleanMethod, alpha.robust, eff)
+    if(xts::is.xts(returns))
+      returns <- xts::xts(temp.returns, returns.dates) else
+        returns <- temp.returns
+  }
+  
   # Function evaluation
   if(isTRUE(evalShape)){
     if(is.null(retVals))
       if(!is.null(returns))
         retVals <- seq(mean(returns)-k*sd(returns), mean(returns)+k*sd(returns), by=0.001) else
           retVals <- seq(0.005-k*0.07, 0.005+k*0.07, by=0.001)
-        IFvals <- cbind(retVals, IF.fn(retVals, risk="SoR", returns=returns, nuisPars , rf=rf, threshold="mean"))
+        IFvals <- cbind(retVals, IF.fn(retVals, estimator="SoR", returns=returns, nuisPars , rf=rf, threshold="mean"))
         colnames(IFvals) <- c("r", "IFvals")
         if(isTRUE(IFplot)){
           plot(IFvals[,1], IFvals[,2], type="l", 
@@ -46,18 +58,6 @@ IF.SoR.mean <- function(returns=NULL, evalShape=FALSE, retVals=NULL, nuisPars=NU
             on.exit(options(opt)) 
             stop() 
           }
-  }
-  
-  # Storing the dates
-  if(xts::is.xts(returns))
-    returns.dates <- zoo::index(returns)
-  
-  # Adding the robust filtering functionality
-  if(cleanOutliers){
-    temp.returns <- robust.cleaning(returns, cleanMethod, alpha.robust, eff)
-    if(xts::is.xts(returns))
-      returns <- xts::xts(temp.returns, returns.dates) else
-        returns <- temp.returns
   }
   
   # Computing the mean of the returns
@@ -129,13 +129,25 @@ IF.SoR.const <- function(returns=NULL, evalShape=FALSE, retVals=NULL, nuisPars=N
       nuisPars <- nuisParsFn(nuis.mu, nuis.sd, nuis.c, nuis.alpha, nuis.beta)
     }
   
+  # Storing the dates
+  if(xts::is.xts(returns))
+    returns.dates <- zoo::index(returns)
+  
+  # Adding the robust filtering functionality
+  if(cleanOutliers){
+    temp.returns <- robust.cleaning(returns, cleanMethod, alpha.robust, eff)
+    if(xts::is.xts(returns))
+      returns <- xts::xts(temp.returns, returns.dates) else
+        returns <- temp.returns
+  }
+  
   # Function evaluation
   if(isTRUE(evalShape)){
     if(is.null(retVals))
       if(!is.null(returns))
         retVals <- seq(mean(returns)-k*sd(returns), mean(returns)+k*sd(returns), by=0.001) else
           retVals <- seq(0.005-k*0.07, 0.005+k*0.07, by=0.001)
-        IFvals <- cbind(retVals, IF.fn(x=retVals, risk="SoR", returns=returns, nuisPars , const=const, threshold="const"))
+        IFvals <- cbind(retVals, IF.fn(x=retVals, estimator="SoR", returns=returns, nuisPars , const=const, threshold="const"))
         colnames(IFvals) <- c("r", "IFvals")
         if(isTRUE(IFplot)){
           plot(IFvals[,1], IFvals[,2], type="l", 
@@ -150,18 +162,6 @@ IF.SoR.const <- function(returns=NULL, evalShape=FALSE, retVals=NULL, nuisPars=N
             on.exit(options(opt)) 
             stop() 
           }
-  }
-  
-  # Storing the dates
-  if(xts::is.xts(returns))
-    returns.dates <- zoo::index(returns)
-  
-  # Adding the robust filtering functionality
-  if(cleanOutliers){
-    temp.returns <- robust.cleaning(returns, cleanMethod, alpha.robust, eff)
-    if(xts::is.xts(returns))
-      returns <- xts::xts(temp.returns, returns.dates) else
-        returns <- temp.returns
   }
   
   # Length of the vector of returns
@@ -213,7 +213,7 @@ IF.SoR.const <- function(returns=NULL, evalShape=FALSE, retVals=NULL, nuisPars=N
 #' @description \code{IF.SoR} returns the data and plots the shape of either the IF or the IF TS for the Sortino Ratio
 #'
 #' @param returns Returns data of the asset or portfolio. This can be a numeric or an xts object.
-#' @param evalShape Evaluation of the shape of the IF risk measure if TRUE. Otherwise, a TS of the IF of the provided returns is computed.
+#' @param evalShape Evaluation of the shape of the IF risk or performance measure if TRUE. Otherwise, a TS of the IF of the provided returns is computed.
 #' @param retVals Values used to evaluate the shape of the IF.
 #' @param nuisPars Nuisance parameters used for the evaluation of the shape of the IF (if no returns are provided).
 #' @param k Range parameter for the shape of the IF (the SD gets multiplied k times).
@@ -231,6 +231,9 @@ IF.SoR.const <- function(returns=NULL, evalShape=FALSE, retVals=NULL, nuisPars=N
 #' @param ... Addtional parameters.
 #'
 #' @return Influence function of SoR_C.
+#' 
+#' @details 
+#' For further details on the usage of the \code{nuisPars} argument, please refer to Section 3.1 for the \code{RPEIF} vignette.
 #'
 #' @author Anthony-Alexander Christidis, \email{anthony.christidis@stat.ubc.ca}
 #'
