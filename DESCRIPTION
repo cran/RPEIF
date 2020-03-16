@@ -2,8 +2,8 @@ Package: RPEIF
 Type: Package
 Title: Computation and Plots of Influence Functions for Risk and
         Performance Measures
-Version: 1.0.6
-Date: 2020-03-02
+Version: 1.0.7
+Date: 2020-03-15
 Author: Anthony Christidis <anthony.christidis@stat.ubc.ca>,
     Shengyu Zhang <syzhang@uw.edu>,
     Douglas Martin <doug@amath.washington.edu>
@@ -23,6 +23,6 @@ Suggests: R.rsp, testthat, RobStatTM
 VignetteBuilder: R.rsp
 LazyData: true
 NeedsCompilation: no
-Packaged: 2020-03-03 01:28:47 UTC; antho
+Packaged: 2020-03-15 22:29:40 UTC; antho
 Repository: CRAN
-Date/Publication: 2020-03-03 09:10:03 UTC
+Date/Publication: 2020-03-16 10:40:07 UTC
