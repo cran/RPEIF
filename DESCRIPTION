@@ -2,8 +2,8 @@ Package: RPEIF
 Type: Package
 Title: Computation and Plots of Influence Functions for Risk and
         Performance Measures
-Version: 1.2.1
-Date: 2021-05-06
+Version: 1.2.2
+Date: 2021-05-11
 Author: Anthony Christidis <anthony.christidis@stat.ubc.ca>,
     Shengyu Zhang <syzhang@uw.edu>,
     Douglas Martin <doug@amath.washington.edu>
@@ -17,12 +17,11 @@ Description: Computes the influence functions time series of the returns for the
 License: GPL (>= 2)
 Biarch: true
 Imports: xts, zoo, stats
-Depends: R (>= 3.5.0)
+Depends:
 RoxygenNote: 7.0.2
-Suggests: R.rsp, testthat, RobStatTM
+Suggests: R.rsp, testthat, RobStatTM, PerformanceAnalytics
 VignetteBuilder: R.rsp
-LazyData: true
 NeedsCompilation: no
-Packaged: 2021-05-06 07:38:18 UTC; antho
+Packaged: 2021-05-11 22:33:38 UTC; antho
 Repository: CRAN
-Date/Publication: 2021-05-06 11:50:02 UTC
+Date/Publication: 2021-05-13 07:32:11 UTC
