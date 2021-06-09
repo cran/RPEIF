@@ -1,6 +1,6 @@
-f5c29d1052f603f73dd799316636e765 *DESCRIPTION
+3f9a236ec3ebbf9b8a9a722e73640705 *DESCRIPTION
 c562878ede802111299cc2b4d3d76f34 *NAMESPACE
-ffeb52f3666a287e666651cb1a11cec3 *NEWS.md
+e075ed0b0100274d939b7796e676bdee *NEWS.md
 af59bba51792d39440c175d9d5c51226 *R/DataCheck.R
 3d63f6d6988f9b8300c0d06df4077f40 *R/EvaluateShape.R
 71b27c26d8831f2ec26c484ffcabc0ea *R/IF_DSR.R
@@ -22,9 +22,9 @@ e96d8d6a668d9825332f7393393e117b *R/InfluenceFunctions.R
 0b0073a8b8fb62e6d878776acdfe3d84 *R/Nuisance_Parameters.R
 ce190fcfc3ab9555b527b792f4c61e29 *R/RiskPerformanceMeasure_Functions.R
 f6a68a2ef9fc4531e04a7e9e42a0673b *R/RobustFilter.R
-af6487e95efff1fb3af23285e77a52c5 *README.md
+ddc1e09db6191bc4c723f6529b2c74b6 *README.md
 23dfc33c95bd955160f3fbee8953cf0f *build/vignette.rds
-91c5e9d54757fad9734a57818fb25224 *inst/doc/RPEIFVignette.pdf
+9acfff8d2a266ff181bd3c8f4f930fe4 *inst/doc/RPEIFVignette.pdf
 2fe2431e24bba09872bb3b4c2193a0d5 *inst/doc/RPEIFVignette.pdf.asis
 b4da80cae59f7be3a520771e01fa5884 *man/IF.DSR.Rd
 63efb4514685ae1ab3cfcd3f1660f878 *man/IF.ES.Rd
